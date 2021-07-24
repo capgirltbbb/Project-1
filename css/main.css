@@ -1,0 +1,10 @@
+canvas {
+    border: 1px solid black;
+    display: grid;   
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
