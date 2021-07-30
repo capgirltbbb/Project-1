@@ -1,5 +1,5 @@
 const canvas = document.getElementById("canvas");
-const context = canvas.getContext("2d")
+const context = canvas.getContext("2d");
 
 let score = 0;
 let lives = 3;
@@ -10,13 +10,14 @@ backgroundImg.src = "./Images/Happy Hopper Background.png";
 //player
 
 const frog = {
-    x: 425,
-    y: 555,
-    width: 50,
-    height: 45,
-};
+    x: 430,
+    y: 554,
+    width: 45,
+    height: 40,
+    lives: 3,
+}
 
-//obstacle
+//obstacles
 
 const truck = {
     x: 0,
@@ -24,51 +25,42 @@ const truck = {
     width: 100,
     height: 40,
 }
-
 const police = {
-    x: 0,
+    x: canvas.width,
     y: 465,
     width: 75,
     height: 40,
 }
-
 const redcar = {
-    x:0,
+    x: 0,
     y: 510,
     width: 75,
     height: 40,
 }
-
 const bluecar = {
-    x: 0,
-    y: 375,
-    width: 75,
-    height: 40,
-}
-
-const orangecar = {
     x: 0,
     y: 325,
     width: 75,
     height: 40,
 }
-
+const orangecar = {
+    x: canvas.width,
+    y: 370,
+    width: 75,
+    height: 40,
+}
 
 const frogImg = new Image();
 frogImg.src = "./Images/istockphoto-473243362-612x612.jpg";
 
-
 const truckImg = new Image();
 truckImg.src = "./Images/Yellow Truck.png";
-
 
 const policeImg = new Image();
 policeImg.src = "./Images/Police Car.jpg";
 
-
 const redcarImg = new Image();
 redcarImg.src = "./Images/Red Car.jpg";
-
 
 const bluecarImg = new Image();
 bluecarImg.src = "./Images/Blue Car.png";
@@ -76,6 +68,25 @@ bluecarImg.src = "./Images/Blue Car.png";
 const orangecarImg = new Image();
 orangecarImg.src = "./Images/Orange Car.png";
 
+const obstacles = [truck, police, redcar, bluecar, orangecar];
+
+//collision
+
+const collisionDetection = (obj1, obj2) => {
+    return  !(
+        obj1.x + obj1.width < obj2.x ||
+        obj1.y + obj1.height < obj2.y ||
+        obj2.x + obj2.width < obj1.x ||
+        obj2.y + obj2.height < obj1.y
+    )
+}
+
+// if(collisionDetection){
+//     frog.x = oldFrog.x;
+//     frog.y = oldFrog.y;
+//     frog.width = oldFrog.width;
+//     frog.height = oldFrog.height;
+// }
 
 
 const drawEverything = () => {
@@ -87,78 +98,103 @@ const drawEverything = () => {
     context.drawImage(bluecarImg, bluecar.x, bluecar.y, bluecar.width, bluecar.height);
     context.drawImage(orangecarImg, orangecar.x, orangecar.y, orangecar.width, orangecar.height);
 
-    context.fillstyle = "black";
-    context.font = "25px Arial";
-    context.fillText(`Score: ${score}`, 800, 50);
+    obstacles.forEach(vehicle => {
 
-    context.fillstyle ="black";
-    context.font ="25px Arial";
-    context.fillText(`Lives: ${lives}`, 800, 75);
-};
+        if (collisionDetection(frog, vehicle)) {
+            frog.lives--;
+            frog.x = 430;
+            frog.y = 554;
+            if (frog.lives === 0) {
+              gameOver();
+            }
+        }
+    })
+  };
 
-drawEverything();
-
-
-
-const drawLoop = () => {
+  const drawLoop = () => {
     context.clearRect(0, 0, canvas.width, canvas.height);
-
+  
     drawEverything();
+    
+    context.fillStyle = "black";
+    context.font = "25px Arial";
+    context.fillText(`Score: ${score}`, 800, 25);
 
-    truck.x += 10;
-    if(truck.x > canvas.width){
-        truck.x = -canvas.width;
+    context.fillStyle = "black";
+    context.font = "25px Arial";
+    context.fillText(`Lives: ${frog.lives}`, 800, 50); 
+
+    truck.x += 8;
+    if (truck.x > canvas.width) {
+        truck.x = 0;
     }
-    police.x += 8;
-    if(police.x > canvas.width){
-        police.x = -canvas.width;
+    police.x -= 9;
+    if (police.x < 0) {
+        police.x = canvas.width;
     }
-    redcar.x += 5;
+    redcar.x += 6;
     if(redcar.x > canvas.width){
-        redcar.x = -canvas.width;
+        redcar.x = 0;
     }
-    orangecar.x += 7;
-    if(orangecar.x > canvas.width){
-        orangecar.x = -canvas.width;
+    orangecar.x -= 12;
+    if(orangecar.x < 0){
+        orangecar.x = canvas.width;
     }
-    bluecar.x += 12 ; 
-    if(bluecar.x > canvas.width){
-        bluecar.x = -canvas.width;
+    bluecar.x += 10;
+    if(bluecar.x >canvas.width){
+        bluecar.x = 0;
+    }
+
+    if (frog.y < 30){
+        frog.x = 430;
+        frog.y = 554;
+        score += 10;
     }
 
     requestAnimationFrame(drawLoop);
-};
+}
 
-drawLoop();
-
-
+  // player movements
 
 document.addEventListener("keydown", (event) => {
     switch (event.code) {
-        case "ArrowUp":
-        case "KeyW":
-            frog.y -= 45;
-            console.log(frog)
-            break;
-        
-        case "ArrowDown":
-        case "KeyX":
-            if(frog.y < canvas.height) frog.y += 45;
-            console.log(frog)
-            break;
+      case "ArrowRight":
+      case "KeyD":
+          if (frog.x < canvas.width) frog.x += 45;
+          break;
 
-        case "ArrowLeft":
-        case "KeyA":
-            if(frog.x > 25) frog.x -= 45;
-            break;
+      case "ArrowLeft":
+      case "KeyA":
+          if(frog.x > 40) frog.x -= 45;
+          break;
+    case "ArrowUp":
+    case "KeyW":
+          if(frog.y > 10) frog.y -= 45;
+          break;
 
-        case "ArrowRight":
-        case "KeyD":
-            if(frog.x < canvas.width) frog.x += 45;
-            break;
-    };      
+    case "ArrowDown":
+    case "KeyX":
+          if(frog.y < canvas.height) frog.y += 45;
+          break;
+    }
 });
 
+const gameOver = () => {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  
+    const endGame = {
+      x: 0,
+      y: 0,
+      width: canvas.width,
+      height: canvas.height
+    };
+  
+    const gameOverImg = new Image();
+    gameOverImg.src = "./images/GameOver.png";
+  
+    gameOverImg.addEventListener("load", () => {
+      context.drawImage(gameOverImg, endGame.x, endGame.y, endGame.width, endGame.height);
+    });
+  };
 
-
-
+drawLoop();
