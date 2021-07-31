@@ -51,16 +51,16 @@ const orangecar = {
 }
 
 const frogImg = new Image();
-frogImg.src = "./Images/istockphoto-473243362-612x612.jpg";
+frogImg.src = "./Images/frog.jpg";
 
 const truckImg = new Image();
 truckImg.src = "./Images/Yellow Truck.png";
 
 const policeImg = new Image();
-policeImg.src = "./Images/Police Car.jpg";
+policeImg.src = "./Images/Police Car.png";
 
 const redcarImg = new Image();
-redcarImg.src = "./Images/Red Car.jpg";
+redcarImg.src = "./Images/Red Car.png";
 
 const bluecarImg = new Image();
 bluecarImg.src = "./Images/Blue Car.png";
@@ -97,7 +97,7 @@ const drawEverything = () => {
             frog.x = 430;
             frog.y = 554;
             if (frog.lives === 0) {
-                alert("game over")
+                // alert("game over")
               gameOver();
             }
         }
