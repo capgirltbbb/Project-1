@@ -81,14 +81,6 @@ const collisionDetection = (obj1, obj2) => {
     )
 }
 
-// if(collisionDetection){
-//     frog.x = oldFrog.x;
-//     frog.y = oldFrog.y;
-//     frog.width = oldFrog.width;
-//     frog.height = oldFrog.height;
-// }
-
-
 const drawEverything = () => {
     context.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
     context.drawImage(frogImg, frog.x, frog.y, frog.width, frog.height);
@@ -105,6 +97,7 @@ const drawEverything = () => {
             frog.x = 430;
             frog.y = 554;
             if (frog.lives === 0) {
+                alert("game over")
               gameOver();
             }
         }
@@ -126,23 +119,23 @@ const drawEverything = () => {
 
     truck.x += 8;
     if (truck.x > canvas.width) {
-        truck.x = 0;
+        truck.x = -20;
     }
     police.x -= 9;
     if (police.x < 0) {
-        police.x = canvas.width;
+        police.x = canvas.width + 20;
     }
     redcar.x += 6;
     if(redcar.x > canvas.width){
-        redcar.x = 0;
+        redcar.x = -20;
     }
     orangecar.x -= 12;
     if(orangecar.x < 0){
-        orangecar.x = canvas.width;
+        orangecar.x = canvas.width + 20;
     }
     bluecar.x += 10;
     if(bluecar.x >canvas.width){
-        bluecar.x = 0;
+        bluecar.x = -20;
     }
 
     if (frog.y < 30){
@@ -150,8 +143,9 @@ const drawEverything = () => {
         frog.y = 554;
         score += 10;
     }
-
-    requestAnimationFrame(drawLoop);
+    if (frog.lives > 0){
+        requestAnimationFrame(drawLoop);
+    }
 }
 
   // player movements
@@ -160,7 +154,7 @@ document.addEventListener("keydown", (event) => {
     switch (event.code) {
       case "ArrowRight":
       case "KeyD":
-          if (frog.x < canvas.width) frog.x += 45;
+          if (frog.x < 800) frog.x += 45;
           break;
 
       case "ArrowLeft":
@@ -174,27 +168,34 @@ document.addEventListener("keydown", (event) => {
 
     case "ArrowDown":
     case "KeyX":
-          if(frog.y < canvas.height) frog.y += 45;
+          if(frog.y < 550) frog.y += 45;
           break;
     }
 });
 
+
 const gameOver = () => {
     context.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawEverything();
+    
+    const gameEnd = {
+        x: 0,
+        y: 0,
+        width: canvas.width,
+        height: canvas.height,
+    }
+    
+
+   const gameOverImg = new Image();
+   gameOverImg.src = "./Images/GameOver.png";
   
-    const endGame = {
-      x: 0,
-      y: 0,
-      width: canvas.width,
-      height: canvas.height
-    };
-  
-    const gameOverImg = new Image();
-    gameOverImg.src = "./images/GameOver.png";
-  
-    gameOverImg.addEventListener("load", () => {
-      context.drawImage(gameOverImg, endGame.x, endGame.y, endGame.width, endGame.height);
-    });
-  };
+   gameOverImg.addEventListener("load", () => {
+       context.drawImage(gameOverImg, gameEnd.x, gameEnd.y, gameEnd.width, gameEnd.height);
+});
+
+};
+
+
 
 drawLoop();
